@@ -314,7 +314,6 @@ export default function TraceablePeerConnection(
             = event => this._remoteStreamAdded(event.stream);
         this.peerconnection.onremovestream
             = event => this._remoteStreamRemoved(event.stream);
-    } else {
         this.peerconnection.ontrack = event => {
             const stream = event.streams[0];
 
@@ -323,6 +322,7 @@ export default function TraceablePeerConnection(
                 this._remoteTrackRemoved(stream, evt.track);
             };
         };
+    } else {
     }
     this.onsignalingstatechange = null;
     this.peerconnection.onsignalingstatechange = event => {
