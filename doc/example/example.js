@@ -1,14 +1,46 @@
 /* global $, JitsiMeetJS */
 
+// Mock browser for Node.js
+if (!this.document) {
+
+    const Window = require('window');
+    const w = new Window();
+    global.window = w;
+    global.navigator = w.navigator;
+    global.navigator.mediaDevices = {
+        // ...require('./mocks')
+    };
+    global.document = w.document;
+    global.XMLHttpRequest = w.XMLHttpRequest;
+    global.DOMParser = require('xmldom').DOMParser;
+  
+    const wrtc = require('wrtc');
+    Object.keys(wrtc).forEach(e => global[e] = wrtc[e]);
+    global.RTCAudioSink = require('wrtc').nonstandard.RTCAudioSink;
+    global.RTCVideoSink = require('wrtc').nonstandard.RTCVideoSink;
+    const RTCAudioSink = require('wrtc').nonstandard.RTCAudioSink;
+
+    global.audioSink = {setSinkId:(...args)=> new RTCAudioSink(...args)}
+
+    global.$ = require('jquery');
+    global.WebSocket = require('websocket').w3cwebsocket;
+    global.JitsiMeetJS = require('../../lib-jitsi-meet.js');
+}
+
+const meetingRoomName = '60237f557794a4005ee0b4e7-1';
+// const meetingRoomName = '6035071b873f8c6c08247979-1'; // front
+
+const baseURL = 'https://alpha.jitsi.net/';
+// const baseURL = 'https://dev-jitsi.riffplatform.com/';
+
+const url = new URL(baseURL);
 const options = {
     hosts: {
-        domain: 'jitsi-meet.example.com',
-        muc: 'conference.jitsi-meet.example.com' // FIXME: use XEP-0030
+        domain: url.hostname,
+        muc: `conference.${url.hostname}`
     },
-    bosh: '//jitsi-meet.example.com/http-bind', // FIXME: use xep-0156 for that
-
-    // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://jitsi.org/jitsimeet'
+    bosh: `${baseURL}http-bind`,
+    clientNode: baseURL,
 };
 
 const confOptions = {
@@ -62,6 +94,8 @@ function onLocalTracks(tracks) {
  * @param track JitsiTrack object
  */
 function onRemoteTrack(track) {
+    console.log('remote_track_added', track);
+
     if (track.isLocal()) {
         return;
     }
@@ -128,7 +162,7 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess() {
-    room = connection.initJitsiConference('conference', confOptions);
+    room = connection.initJitsiConference(meetingRoomName, confOptions);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, track => {
         console.log(`track removed!!!${track}`);
