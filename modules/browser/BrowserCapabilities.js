@@ -342,4 +342,30 @@ export default class BrowserCapabilities extends BrowserDetection {
 
         return -1;
     }
+
+    //mock browser features
+    _getChromiumBasedVersion=() => false; // 88
+    isChromiumBased=() => false; // true
+    isSafari=() => false; 
+    isSupported=() => false; // true
+    isTwa=() => false;
+    isUserInteractionRequiredForUnmute=() => false;
+    supportsAudioRed=() => false;
+    supportsBandwidthStatistics=() => false; // true
+    supportsCodecPreferences=() => false;
+    supportsDeviceChangeEvent=() => false; // true
+    supportsGetDisplayMedia=() => false; // true
+    supportsInsertableStreams=() => false; // true
+    supportsLocalCandidateRttStatistics=() => false; // true
+    supportsP2P=() => false; // true
+    supportsPerformanceObserver=() => false; // true
+    supportsRTTStatistics=() => false; // true
+    usesAdapter=() => false; // true
+    usesRidsForSimulcast=() => false;
+    usesSdpMungingForSimulcast=() => false; // true
+    usesUnifiedPlan = () => false;
+    
+    supportsSdpSemantics=() => true; // ERROR if false: Endpoint connection status changed ...
+    usesNewGumFlow=() => true; // ERROR if false: Endpoint does not appear to be WebRTC-capable
+    usesPlanB=() => true; // ERROR if false: doesn't get tracks
 }
